@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Automation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .device {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Smart Home Automation System</h1>
+
+    <!-- جهاز الإضاءة -->
+    <div class="device">
+        <h3>Light</h3>
+        <button id="light-btn" onclick="toggleDevice('light')">Toggle Light</button>
+        <p>Status: <span id="light-status">Loading...</span></p>
+    </div>
+
+    <!-- جهاز التكييف -->
+    <div class="device">
+        <h3>AC</h3>
+        <button id="ac-btn" onclick="toggleDevice('ac')">Toggle AC</button>
+        <p>Status: <span id="ac-status">Loading...</span></p>
+    </div>
+
+    <!-- جهاز المروحة -->
+    <div class="device">
+        <h3>Fan</h3>
+        <button id="fan-btn" onclick="toggleDevice('fan')">Toggle Fan</button>
+        <p>Status: <span id="fan-status">Loading...</span></p>
+    </div>
+
+    <script>
+        // دالة لجلب حالة الجهاز وعرضها في الصفحة
+        function getStatus(device) {
+            fetch(`/device/${device}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById(`${device}-status`).innerText = data[device] ? 'On' : 'Off';
+                })
+                .catch(error => console.error('Error fetching status:', error));
+        }
+
+        // دالة لتغيير حالة الجهاز (تشغيل/إطفاء)
+        function toggleDevice(device) {
+            fetch(`/device/${device}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById(`${device}-status`).innerText = data[device] ? 'On' : 'Off';
+                })
+                .catch(error => console.error('Error toggling device:', error));
+        }
+
+        // جلب حالة الأجهزة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            getStatus('light');
+            getStatus('ac');
+            getStatus('fan');
+        });
+    </script>
+
+</body>
+</html>
